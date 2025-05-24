@@ -26,14 +26,22 @@ function Login(){
     }
 
     return(
-        <div className="auth-container">
-            <h2>Login</h2>
-            <form className="auth-form" onSubmit={handleLogin}>
-                <input type="email" placeholder="Email" value={email} onChange={(e)=>setEmail(e.target.value)} required />
-                <input type="password" placeholder="Password"  value={password} onChange={(e)=>setPassword(e.target.value)}  required />
-                {error && <p style={{color: 'red'}}>{error}</p>}
-                <button type="submit">Daxil ol</button>
-            </form>
+        <div className="login_container">
+
+            <div className="login_left_panel">
+                <img src="../assets/login.png" alt="photo" />
+            </div>
+
+            <div className="login_right_panel">
+                <span>Welcome</span>
+                <form className="auth-form" onSubmit={handleLogin}>
+                    <input type="email" placeholder="Email" value={email} onChange={(e)=>setEmail(e.target.value)} required />
+                    <input type="password" placeholder="Password"  value={password} onChange={(e)=>setPassword(e.target.value)}  required />
+                    {error && <p style={{color: 'red'}}>{error}</p>}
+                    <button type="submit">Daxil ol</button>
+                </form>
+            </div>
+
         </div>
     )
 }
