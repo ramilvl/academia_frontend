@@ -1,0 +1,65 @@
+@use './font.scss' as font;
+.slide {
+  .slide-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 400px;
+    padding: 2rem 3rem;
+    background-color: #5C24821A;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    gap: 2rem;
+
+    .text-content {
+      flex: 1;
+      span {
+        font-family: font.$font_poppins;
+        font-weight: 500;
+        font-size: 36px;
+        color: #000000;
+        line-height: 120%;
+        margin-bottom: 0.5rem;
+      }
+
+      p {
+        margin-top: 1rem;
+        font-family: font.$font_poppins;
+        font-weight: 400;
+        font-size: 20px;
+        color: #000000;
+      }
+
+      button {
+        background-color: #F95B0E;
+        color: white;
+        margin-top: 2.5rem;
+        font-family: font.$font_poppins;
+        border: none;
+        padding: 12px 40px;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background-color 0.3s ease;
+
+        &:hover {
+          background-color: #c0450d;
+        }
+      }
+    }
+
+    .image-wrapper {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+
+      img {
+        max-height: 100%;
+        width: auto;
+        object-fit: contain;
+      }
+    }
+  }
+}

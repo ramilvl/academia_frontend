@@ -1,43 +1,78 @@
+@use './font.scss' as font;
+
 nav {
-  background-color: #2c3e50;
-  padding: 1rem 2rem;
+  background-color: #5C2482;
+  padding: 2rem 3rem;
 
-  ul {
+  .navbar {
     display: flex;
-    gap: 1.5rem;
-    list-style: none;
     align-items: center;
-    margin: 0;
-    padding: 0;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
 
-    li {
-      color: #ecf0f1;
-      font-weight: 500;
+  .logo {
+    font-size: 1.1rem;
+    font-weight: 700;
+    font-family: 'Georgia', serif;
+    letter-spacing: 1px;
+    color: #fff;
+    text-transform: uppercase;
+}
 
-      &:last-child button {
-        background-color: #e74c3c;
-        border: none;
-        padding: 0.3rem 0.8rem;
-        border-radius: 4px;
-        color: white;
-        cursor: pointer;
-        font-weight: 600;
-        transition: background-color 0.3s ease;
 
-        &:hover {
-          background-color: #c0392b;
-        }
-      }
-    }
+  .nav-links,
+  .user-section {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
 
-    a {
-      color: #ecf0f1;
-      text-decoration: none;
-      transition: color 0.3s ease;
+  a {
+  position: relative;
+  color: #F6F6F6;
+  text-decoration: none;
+  font-size: 15px;
+  font-family: font.$font_poppins;
+  font-weight: 400;
 
-      &:hover {
-        color: #3498db;
-      }
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    width: 0;
+    height: 2px;
+    background-color: #F95B0E;
+  }
+
+  &:hover::after {
+    width: 100%;
+  }
+
+  &:hover {
+    color: #ecf0f1; 
+  }
+}
+
+
+  .user-name {
+    color: #ecf0f1;
+    font-weight: 500;
+  }
+
+  button {
+    background-color: #e74c3c;
+    border: none;
+    padding: 0.3rem 0.8rem;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: #c0392b;
     }
   }
 }

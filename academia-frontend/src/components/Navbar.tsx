@@ -8,24 +8,30 @@ const Navbar = () => {
 
   return (
     <nav>
-      <ul>
-        <li><Link to="/">Home</Link></li>
-        <li><Link to="/course">Course</Link></li>
-        <li><Link to="/about">About</Link></li>
-        <li><Link to="/contact">Contact</Link></li>
+      <div className="navbar">
+        <div className="logo">Academia</div>
 
-        {user ? (
-          <>
-            <li>Welcome, {user.displayName || user.email}</li>
-            <li><button onClick={() => auth.signOut()}>Logout</button></li>
-          </>
-        ) : (
-          <>
-            <li><Link to="/login">Login</Link></li>
-            <li><Link to="/register">Register</Link></li>
-          </>
-        )}
-      </ul>
+        <div className="nav-links">
+          <Link to="/">Home</Link>
+          <Link to="/about">About</Link>
+          <Link to="/course">Courses</Link>
+          <Link to="/contact">Contact</Link>
+        </div>
+
+        <div className="user-section">
+          {user ? (
+            <>
+              <span className="user-name">Welcome, {user.displayName || user.email}</span>
+              <button onClick={() => auth.signOut()}>Logout</button>
+            </>
+          ) : (
+            <>
+              <Link to="/login">Login</Link>
+              <Link to="/register">Register</Link>
+            </>
+          )}
+        </div>
+      </div>
     </nav>
   );
 };

@@ -18,7 +18,10 @@
 
 
 .login_left_panel{
+  background: #5C2482;
+  height: 100%;
   width: 50%;
+  border-bottom-right-radius: 100px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -31,6 +34,7 @@
 .login_right_panel{
   width: 50%;
   background: white;
+  border-top-left-radius: 100px;
   height: 100%;
   display: flex;
   align-items: center;
