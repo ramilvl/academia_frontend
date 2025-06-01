@@ -9,12 +9,12 @@ const Navbar = () => {
   return (
     <nav>
       <div className="navbar">
-        <div className="logo">Academia</div>
+        <div className="logo"><Link to="/">Academia</Link></div>
 
         <div className="nav-links">
           <Link to="/">Home</Link>
           <Link to="/about">About</Link>
-          <Link to="/course">Courses</Link>
+          <Link to="/courses">Courses</Link>
           <Link to="/contact">Contact</Link>
         </div>
 

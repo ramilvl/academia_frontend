@@ -1,0 +1,98 @@
+.courses-page {
+  padding: 2rem;
+
+  h1 {
+    font-size: 2rem;
+    color: #2c3e50;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .course-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+
+    .course-card {
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+      transition: transform 0.2s ease;
+
+      &:hover {
+        transform: translateY(-5px);
+      }
+
+      img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+      }
+
+      .card-content {
+        padding: 1rem;
+
+        h2 {
+          font-size: 1.25rem;
+          margin-bottom: 0.5rem;
+          color: #333;
+        }
+
+        p {
+          font-size: 0.95rem;
+          color: #666;
+        }
+      }
+    }
+  }
+}
+.buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+
+  button {
+    padding: 0.5rem 1rem;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #2980b9;
+    }
+  }
+}
+
+.questions {
+  margin-top: 1rem;
+
+  .question-block {
+    margin-bottom: 1rem;
+
+    p {
+      font-weight: bold;
+    }
+
+    label {
+      display: block;
+      margin-left: 1rem;
+    }
+  }
+
+  .result {
+    margin-top: 1rem;
+    background: #f4f4f4;
+    padding: 1rem;
+    border-radius: 10px;
+
+    pre {
+      font-size: 0.9rem;
+      white-space: pre-wrap;
+      line-height: 1.5;
+    }
+  }
+}
