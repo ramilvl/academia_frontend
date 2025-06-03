@@ -1,0 +1,40 @@
+@use './font.scss' as font;
+
+.course-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: 450px;
+
+  img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+  }
+
+  .course-info {
+    padding: 1rem;
+
+    span {
+      margin: 0 0 0.5rem;
+      font-family: font.$font_poppins;
+      font-weight: 600;
+      font-size: 18px;
+    }
+
+    p {
+      font-size: 14px;
+      margin: 0 0 0.5rem;
+      font-family: font.$font_poppins;
+    }
+
+    a {
+      color: #ff6600;
+      font-family: font.$font_poppins;
+      text-decoration: none;
+      font-size: 14px;
+      font-style: italic;
+    }
+  }
+}
