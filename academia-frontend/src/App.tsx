@@ -6,6 +6,7 @@ import Navbar from './components/Navbar';
 import Courses from "./pages/Courses";
 import About from './pages/About'
 import CourseDetail from "./pages/CourseDetail";
+import MaterialDetail from './components/Course/MaterialDetail';
 
 
 function App() {
@@ -20,7 +21,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/courses" element={<Courses />} />
-        <Route path="/courses/:id" element={<CourseDetail />} />
+        <Route path="/courses/:courseId" element={<CourseDetail />} />
+        <Route path="/courses/:courseId/materials/:materialId" element={<MaterialDetail />} />
         <Route path="/about" element={<About />} />
       </Routes>
     </>

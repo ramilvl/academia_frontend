@@ -1,17 +1,22 @@
-import { Link } from 'react-router-dom';
+import React from 'react';
+import CourseCard from '../components/Course/CourseCard';
 import { courses } from '../data/courses';
+import '../styles/courses.scss';
 
-const Courses = () => (
-  <div className="courses">
-    <h2>Kurslar</h2>
-    <ul>
-      {courses.map(course => (
-        <li key={course.id}>
-          <Link to={`/courses/${course.id}`}>{course.title}</Link>
-        </li>
+const Courses: React.FC = () => {
+  return (
+    <div className="courses-container">
+      {courses.map((course) => (
+        <CourseCard
+          key={course.id}
+          id={course.id}
+          title={course.title}
+          description={course.description}
+          imageUrl={course.imageUrl}
+        />
       ))}
-    </ul>
-  </div>
-);
+    </div>
+  );
+};
 
 export default Courses;

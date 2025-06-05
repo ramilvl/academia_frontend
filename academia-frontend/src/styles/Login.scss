@@ -75,3 +75,27 @@
   }
 
 }
+
+input {
+  width: 400px;
+  height: 48px;
+  border-radius: 12px;
+  border: 1px solid #C4C4C4;
+  padding: 0 16px;
+  font-size: 16px;
+  font-family: font.$font_poppins;
+  color: #333;
+
+  &::placeholder {
+    color: #999;
+    font-weight: 400;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: #F95B0E;  // match the button color for brand consistency
+    box-shadow: 0 0 6px rgba(249, 91, 14, 0.5);
+    background-color: #fff;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+}
