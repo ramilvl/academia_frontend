@@ -1,5 +1,5 @@
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
-import '../styles/Login.scss'
+// import '../styles/register.scss'
 import {useState} from 'react'
 import {auth} from '../firebase/config'
 import { useNavigate } from 'react-router-dom';

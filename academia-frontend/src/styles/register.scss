@@ -1,0 +1,75 @@
+// // styles/Login.scss
+
+// .auth-container {
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   min-height: 100vh;
+//   background: linear-gradient(120deg, #0f2027, #203a43, #2c5364);
+//   padding: 1rem;
+
+//   h2 {
+//     color: #ffffff;
+//     margin-bottom: 1rem;
+//     text-align: center;
+//     font-size: 2.2rem;
+//     font-weight: 600;
+//     letter-spacing: 1px;
+//   }
+// }
+
+// .auth-form {
+//   backdrop-filter: blur(12px);
+//   background: rgba(255, 255, 255, 0.1);
+//   border-radius: 16px;
+//   padding: 2rem;
+//   width: 100%;
+//   max-width: 420px;
+//   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+//   border: 1px solid rgba(255, 255, 255, 0.18);
+//   display: flex;
+//   flex-direction: column;
+//   gap: 1.2rem;
+
+//   input {
+//     background: rgba(255, 255, 255, 0.15);
+//     border: none;
+//     padding: 14px 18px;
+//     border-radius: 10px;
+//     color: #fff;
+//     font-size: 1rem;
+//     transition: background 0.3s ease;
+
+//     &::placeholder {
+//       color: rgba(255, 255, 255, 0.6);
+//     }
+
+//     &:focus {
+//       outline: none;
+//       background: rgba(255, 255, 255, 0.25);
+//     }
+//   }
+
+//   p {
+//     color: #ff4d4d;
+//     font-size: 0.9rem;
+//     text-align: center;
+//   }
+
+//   button {
+//     background: #00c6ff;
+//     background: linear-gradient(to right, #0072ff, #00c6ff);
+//     border: none;
+//     padding: 14px;
+//     color: white;
+//     font-size: 1rem;
+//     font-weight: 500;
+//     border-radius: 10px;
+//     cursor: pointer;
+//     transition: transform 0.2s ease;
+
+//     &:hover {
+//       transform: scale(1.03);
+//     }
+//   }
+// }
