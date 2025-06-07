@@ -7,7 +7,7 @@
 }
 
 .login_container {
-  background: #5C2482;
+  background:  #5C2482;
   font-family: font.$font_poppins;
   height: 100vh;
   width: 100%;
@@ -26,6 +26,7 @@
   align-items: center;
   justify-content: center;
   img{
+    position: absolute;
     width: 400px;
     height: 400px;
   }
@@ -35,6 +36,7 @@
   width: 50%;
   background: white;
   border-top-left-radius: 100px;
+  border-bottom-left-radius: 100px;
   height: 100%;
   display: flex;
   align-items: center;
@@ -59,7 +61,8 @@
       width: 400px;
       height: 48px;
       border-radius: 12px;
-      border: 1px solid #C4C4C4
+      border: 1px solid #C4C4C4;
+      padding: 12px;
     }
 
     button{
@@ -71,31 +74,13 @@
       cursor: pointer;
       color: white;
       font-family: font.$font_poppins;
+      transition: background-color 0.2s ease-in;
+    }
+
+    button:hover{
+      background-color: #d94f0c;
     }
   }
 
 }
 
-input {
-  width: 400px;
-  height: 48px;
-  border-radius: 12px;
-  border: 1px solid #C4C4C4;
-  padding: 0 16px;
-  font-size: 16px;
-  font-family: font.$font_poppins;
-  color: #333;
-
-  &::placeholder {
-    color: #999;
-    font-weight: 400;
-  }
-
-  &:focus {
-    outline: none;
-    border-color: #F95B0E;
-    box-shadow: 0 0 6px rgba(249, 91, 14, 0.5);
-    background-color: #fff;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  }
-}
