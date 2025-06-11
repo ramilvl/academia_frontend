@@ -1,0 +1,121 @@
+@use './font.scss' as font;
+
+.navbar-container {
+  background-color: #5C2482;
+  padding: 2rem 3rem;
+  transition: background-color 0.3s ease;
+
+  &.black-navbar {
+    background-color: #000;
+  }
+
+  .navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+
+    &-logo {
+      font-size: 1.1rem;
+      font-weight: 700;
+      font-family: font.$font_poppins;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+
+      a {
+        color: red;
+        text-decoration: none;
+      }
+    }
+
+    &-links,
+    &-user {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    a {
+      position: relative;
+      color: #F6F6F6;
+      text-decoration: none;
+      font-size: 15px;
+      font-family: font.$font_poppins;
+      font-weight: 400;
+
+      &::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -4px;
+        width: 0;
+        height: 2px;
+        background-color: #F95B0E;
+        transition: width 0.3s ease;
+      }
+
+      &:hover::after {
+        width: 100%;
+      }
+
+      &:hover {
+        color: #ecf0f1;
+      }
+    }
+
+    .auth-links {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .user-dropdown {
+      display: flex;
+      align-items: center;
+      gap: 2.4rem;
+      position: relative;
+
+      .user-icon,
+      .extra-icon {
+        color: white;
+        cursor: pointer;
+        transition: transform 0.2s;
+
+        &:hover {
+          transform: scale(1.1);
+        }
+      }
+
+      .dropdown-menu {
+        position: absolute;
+        top: 30px;
+        right: 0;
+        background-color: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 10px;
+        min-width: 160px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        z-index: 10;
+
+        p {
+          margin: 0 0 8px;
+          font-weight: 500;
+          color: #333;
+        }
+
+        button {
+          background: none;
+          border: none;
+          color: #e63946;
+          cursor: pointer;
+          font-weight: bold;
+          padding: 0;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+  }
+}

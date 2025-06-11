@@ -1,0 +1,60 @@
+.material-read-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  z-index: 9999;
+}
+
+.material-read-card {
+  background: #1e1e2f;
+  color: #f0f0f0;
+  max-width: 1200px;
+  width: 100%;
+  padding: 30px 40px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow-y: auto;
+  max-height: 90vh;
+
+  h2 {
+    margin-bottom: 20px;
+    font-size: 28px;
+  }
+
+  p {
+    white-space: pre-line;
+    font-size: 18px;
+    line-height: 1.6;
+  }
+
+  .back-link {
+    display: inline-block;
+    margin-top: 30px;
+    color: #4a90e2;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 16px;
+    transition: color 0.3s ease;
+
+    &:hover {
+      color: #2c5dab;
+      text-decoration: underline;
+    }
+  }
+}
+
+.material-error {
+  color: red;
+  font-weight: 700;
+  font-size: 18px;
+  padding: 40px;
+  text-align: center;
+}

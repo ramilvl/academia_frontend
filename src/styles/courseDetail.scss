@@ -1,0 +1,191 @@
+@use './font.scss' as font;
+
+$primary-color: #6c63ff;
+$secondary-color: #ff6f61;
+$background-color: #f4f7fc;
+$text-color: #333;
+$border-radius: 12px;
+$transition-speed: 0.3s;
+
+.course-detail {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: $background-color;
+  border-radius: $border-radius;
+  box-shadow: 0 8px 20px rgba(108, 99, 255, 0.15);
+
+  .back-link {
+    display: inline-block;
+    margin-bottom: 24px;
+    font-weight: 500;
+    color: $primary-color;
+    font-size: 16px;
+    transition: color $transition-speed ease;
+    &:hover {
+      color: darken($primary-color, 15%);
+    }
+  }
+
+  .course-title {
+    font-family: font.$font_poppins;
+    font-size: 25px;
+    font-weight: 700;
+    margin-bottom: 30px;
+    color: $text-color;
+    text-align: center;
+  }
+
+  .material-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 30px 0;
+    display: grid;
+    gap: 20px;
+
+    .material-item {
+      background-color: white;
+      padding: 18px 22px;
+      border-left: 10px solid rgb(68, 68, 197);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.07);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: box-shadow $transition-speed ease, transform $transition-speed ease;
+
+      &.selected {
+        box-shadow: 0 8px 25px rgba(108, 99, 255, 0.3);
+        transform: translateY(-5px);
+      }
+
+      &:hover {
+        box-shadow: 0 8px 20px rgba(108, 99, 255, 0.2);
+      }
+
+      .material-header {
+        display: flex;
+        justify-content: space-between;
+        font-family: font.$font_poppins;
+        align-items: center;
+        font-weight: 600;
+        font-size: 16px;
+        color: #595757;
+
+        input[type='checkbox'] {
+          width: 24px;
+          height: 24px;
+          accent-color: $primary-color;
+          cursor: pointer;
+          transition: transform $transition-speed ease;
+          &:checked {
+            transform: scale(1.2);
+          }
+        }
+      }
+
+      .material-header-desc {
+        display: flex;
+        flex-direction: column;
+
+        span:nth-of-type(1) {
+          font-size: 20px;
+          color: #333;
+        }
+
+        span:nth-of-type(2) {
+          font-size: 14px;
+          font-weight: bold;
+          color: #666;
+        }
+      }
+
+      .done-status {
+        margin-top: 10px;
+        color: $secondary-color;
+        font-weight: 600;
+        font-size: 14px;
+      }
+    }
+  }
+
+  .material-options {
+    text-align: center;
+    margin-bottom: 30px;
+    p {
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+
+    .btn {
+      cursor: pointer;
+      padding: 12px 30px;
+      border-radius: $border-radius;
+      border: none;
+      font-size: 16px;
+      margin: 0 15px;
+      transition: background-color $transition-speed ease;
+
+      &.btn-read {
+        background-color: $primary-color;
+        color: white;
+        &:hover {
+          background-color: darken($primary-color, 10%);
+        }
+      }
+      &.btn-quiz {
+        background-color: $secondary-color;
+        color: white;
+        &:hover {
+          background-color: darken($secondary-color, 10%);
+        }
+      }
+    }
+  }
+
+  .material-content,
+  .material-quiz {
+    background-color: white;
+    padding: 25px 30px;
+    border-radius: $border-radius;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    margin-bottom: 40px;
+
+    h3 {
+      font-size: 26px;
+      margin-bottom: 15px;
+      color: $primary-color;
+    }
+
+    p {
+      font-size: 18px;
+      line-height: 1.6;
+      color: $text-color;
+    }
+
+    ul {
+      list-style: none;
+      padding-left: 0;
+
+      li {
+        margin-bottom: 20px;
+        font-size: 17px;
+        color: $text-color;
+
+        .option {
+          margin-left: 20px;
+          padding: 6px 12px;
+          background-color: #f0f0ff;
+          border-radius: 8px;
+          margin-bottom: 8px;
+          cursor: default;
+          transition: background-color $transition-speed ease;
+
+          &:hover {
+            background-color: lighten($primary-color, 35%);
+          }
+        }
+      }
+    }
+  }
+}

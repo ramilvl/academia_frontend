@@ -1,0 +1,22 @@
+@use './font.scss' as font;
+
+.courses-section {
+  padding: 80px;
+  background-color: #f5f7fa;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+
+  .courses-title {
+    font-family: font.$font_poppins;
+    font-size: 36px;
+    font-weight: 500;
+    color: #F95B0E;
+  }
+
+  .courses-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+  }
+}

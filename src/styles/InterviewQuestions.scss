@@ -1,0 +1,105 @@
+.interview-page {
+  padding: 2rem;
+  max-width: 100%;
+  margin: auto;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #121212;
+  color: #f5f5f5;
+  min-height: 100vh;
+
+  h2 {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+    color: #ffffff;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid #333;
+    border-radius: 8px;
+    background-color: #1e1e1e;
+    color: #fff;
+    outline: none;
+  }
+
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 2rem;
+
+    select {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #333;
+      background-color: #1e1e1e;
+      color: #f5f5f5;
+      font-size: 1rem;
+    }
+  }
+
+  .flashcard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+  }
+}
+
+.flashcard {
+  perspective: 1200px;
+  cursor: pointer;
+
+  .flashcard-inner {
+    position: relative;
+    width: 100%;
+    height: 240px;
+    transition: transform 0.7s;
+    transform-style: preserve-3d;
+  }
+
+  &.flipped .flashcard-inner {
+    transform: rotateY(180deg);
+  }
+
+  .flashcard-front,
+  .flashcard-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    border-radius: 16px;
+    backdrop-filter: blur(10px);
+    background: rgba(30, 30, 30, 0.8);
+    border: 1px solid #333;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backface-visibility: hidden;
+    font-size: 1rem;
+    font-weight: 500;
+    text-align: center;
+    color: #ffffff;
+    transition: border 0.3s ease;
+  }
+
+  .flashcard-front {
+    border: 1px solid #444;
+  }
+
+  .flashcard-back {
+    transform: rotateY(180deg);
+    border: 1px solid #555;
+    color: #449ce4;
+  }
+
+  &:hover .flashcard-front,
+  &:hover .flashcard-back {
+    border: 1px solid #00e676;
+    box-shadow: 0 0 12px #00e67644;
+  }
+}
