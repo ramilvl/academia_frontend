@@ -1,4 +1,8 @@
-import { Routes, Route, useLocation, Navigate  } from 'react-router-dom';
+import  { useEffect, useState } from 'react';
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from './firebase/config';
+
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Home from './pages/Home';
@@ -13,7 +17,33 @@ import InterviewQuestionsPage from './pages/InterviewQuestionsPage';
 
 function App() {
   const location = useLocation();
+
+  const [user, setUser] = useState<null | object>(null);
+  const [loadingAuthState, setLoadingAuthState] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setLoadingAuthState(false);
+    });
+    return () => unsubscribe();
+  }, []);
+
   const hideNavbar = location.pathname === '/login' || location.pathname === '/register';
+
+  if (loadingAuthState) {
+    return null;
+  }
+
+  const isLoginPage = location.pathname === '/login';
+
+  if (!user && !isLoginPage) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (user && (location.pathname === '/login' || location.pathname === '/register')) {
+    return <Navigate to="/home" replace />;
+  }
 
   return (
     <>
@@ -21,8 +51,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/home" element={<Home />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/home" element={<Home />} />
         <Route path="/courses" element={<Courses />} />
         <Route path="/courses/:courseId" element={<CourseDetail />} />
         <Route path="/course/:courseId/material/:materialId" element={<MaterialOptions />} />
@@ -30,10 +60,10 @@ function App() {
         <Route path="/course/:courseId/material/:materialId/quiz" element={<MaterialQuiz />} />
         <Route path="/about" element={<About />} />
         <Route path="/interview" element={<InterviewQuestionsPage />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </>
   );
 }
 
 export default App;
-
