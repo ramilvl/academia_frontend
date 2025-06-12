@@ -8,7 +8,7 @@ import Register from './pages/Register';
 import Home from './pages/Home';
 import Navbar from './components/Navbar';
 import Courses from "./pages/Courses";
-import About from './pages/About';
+import About from './pages/RecordingSection';
 import CourseDetail from "./pages/CourseDetail";
 import MaterialOptions from './pages/MaterialOptions';
 import MaterialRead from './pages/MaterialRead';
@@ -58,7 +58,7 @@ function App() {
         <Route path="/course/:courseId/material/:materialId" element={<MaterialOptions />} />
         <Route path="/course/:courseId/material/:materialId/read" element={<MaterialRead />} />
         <Route path="/course/:courseId/material/:materialId/quiz" element={<MaterialQuiz />} />
-        <Route path="/about" element={<About />} />
+        <Route path="/recording" element={<About />} />
         <Route path="/interview" element={<InterviewQuestionsPage />} />
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
