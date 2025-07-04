@@ -1,17 +1,17 @@
 import { useState } from 'react';
 import '../styles/Login.scss';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebase/config';
 import { useNavigate } from 'react-router-dom';
-import type { JSX } from 'react/jsx-runtime';
+import { MdEmail, MdLock } from 'react-icons/md';
+import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 
-function Login(): JSX.Element {
+function Login() {
     const navigate = useNavigate();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
     const validateInputs = () => {
         if (!email.trim() || !password.trim()) {
@@ -42,44 +42,86 @@ function Login(): JSX.Element {
 
         setLoading(true);
         try {
-            await signInWithEmailAndPassword(auth, email, password);
-            navigate('/home');
-        } catch (err: any) {
-            if (err.code === 'auth/user-not-found') {
-                setError("Belə bir istifadəçi mövcud deyil.");
-            } else if (err.code === 'auth/wrong-password') {
-                setError("Yanlış şifrə daxil edilib.");
-            } else {
-                setError("Giriş zamanı xəta baş verdi.");
+            const response = await fetch("http://localhost:8080/api/auth/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email, password }),
+            });
+
+            if (!response.ok) {
+                if (response.status === 401) {
+                    setError("Email və ya şifrə yanlışdır.");
+                } else {
+                    setError("Server xətası baş verdi.");
+                }
+                return;
             }
+
+            const data = await response.json();
+            localStorage.setItem("accessToken", data.accessToken);
+            localStorage.setItem("user", JSON.stringify(data.user));
+
+            navigate('/home');
+        } catch {
+            setError("Şəbəkə xətası baş verdi.");
         } finally {
             setLoading(false);
         }
     };
 
+    const handleForgotPassword = () => {
+        navigate('/forget-password');
+    };
+
     return (
         <div className="login_container">
             <div className="login_left_panel">
-                <img src="/assets/login.png" alt="photo" />
+                <img className='img1' src="/assets/login.png" alt="Login" />
             </div>
 
             <div className="login_right_panel">
                 <span>Welcome</span>
                 <form className="auth-form" onSubmit={handleLogin}>
-                    <input
-                        type="email"
-                        placeholder="Email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        autoFocus
-                    />
-                    <input
-                        type="password"
-                        placeholder="Şifrə"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-                    {error && <p style={{ color: 'red' }}>{error}</p>}
+                    <div className="input-wrapper">
+                        <label>Email</label>
+                        <div className="input-field">
+                            <MdEmail className="icon" />
+                            <input
+                                type="email"
+                                placeholder="Emailinizi daxil edin"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                            />
+                        </div>
+                    </div>
+
+                    <div className="input-wrapper">
+                        <label>Şifrə</label>
+                        <div className="input-field">
+                            <MdLock className="icon" />
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                placeholder="Şifrənizi daxil edin"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                            />
+                            {showPassword ? (
+                                <AiOutlineEyeInvisible className="eye-icon" onClick={() => setShowPassword(false)} />
+                            ) : (
+                                <AiOutlineEye className="eye-icon" onClick={() => setShowPassword(true)} />
+                            )}
+                        </div>
+                        <p className="forgot-password" onClick={handleForgotPassword}>
+                            Şifrəni unutmusunuz?
+                        </p>
+                    </div>
+
+                    {error && <p className="error-message">{error}</p>}
+
                     <button type="submit" disabled={loading}>
                         {loading ? 'Giriş edilir...' : 'Daxil ol'}
                     </button>
