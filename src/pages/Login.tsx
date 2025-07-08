@@ -1,10 +1,14 @@
 import { useState } from 'react';
-import '../styles/Login.scss';
 import { useNavigate } from 'react-router-dom';
 import { MdEmail, MdLock } from 'react-icons/md';
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
+import '../styles/Login.scss'
 
-function Login() {
+interface LoginProps {
+    setToken: (token: string | null) => void;
+}
+
+function Login({ setToken }: LoginProps) {
     const navigate = useNavigate();
 
     const [email, setEmail] = useState('');
@@ -32,7 +36,7 @@ function Login() {
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-        setError("");
+        setError('');
 
         const validationError = validateInputs();
         if (validationError) {
@@ -42,30 +46,32 @@ function Login() {
 
         setLoading(true);
         try {
-            const response = await fetch("http://localhost:8080/v1/auth/sign-in", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+            const response = await fetch('http://localhost:8080/v1/auth/sign-in', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),
             });
 
             if (!response.ok) {
                 if (response.status === 401) {
-                    setError("Email və ya şifrə yanlışdır.");
+                    setError('Email və ya şifrə yanlışdır.');
                 } else {
-                    setError("Server xətası baş verdi.");
+                    setError('Server xətası baş verdi.');
                 }
+                setLoading(false);
                 return;
             }
 
             const data = await response.json();
-            localStorage.setItem("accessToken", data.accessToken);
-            localStorage.setItem("user", JSON.stringify(data.user));
+
+            localStorage.setItem('accessToken', data.accessToken);
+            localStorage.setItem('user', JSON.stringify(data.user));
+
+            setToken(data.accessToken);
 
             navigate('/home');
         } catch {
-            setError("Şəbəkə xətası baş verdi.");
+            setError('Şəbəkə xətası baş verdi.');
         } finally {
             setLoading(false);
         }
@@ -83,8 +89,8 @@ function Login() {
 
             <div className="login_right_panel">
                 <span>Welcome</span>
-                <form className="auth-form" onSubmit={handleLogin}>
-                    <div className="input-wrapper">
+                <form onSubmit={handleLogin} className="auth-form">
+                <div className="input-wrapper">
                         <label>Email</label>
                         <div className="input-field">
                             <MdEmail className="icon" />
@@ -98,7 +104,7 @@ function Login() {
                         </div>
                     </div>
 
-                    <div className="input-wrapper">
+                <div className="input-wrapper">
                         <label>Şifrə</label>
                         <div className="input-field">
                             <MdLock className="icon" />
@@ -120,15 +126,17 @@ function Login() {
                         </p>
                     </div>
 
-                    {error && <p className="error-message">{error}</p>}
+                {error && <p className="error-message">{error}</p>}
 
-                    <button type="submit" disabled={loading}>
-                        {loading ? 'Giriş edilir...' : 'Daxil ol'}
-                    </button>
-                </form>
+                <button type="submit" disabled={loading}>
+                    {loading ? 'Giriş edilir...' : 'Daxil ol'}
+                </button>
+            </form>
             </div>
         </div>
     );
 }
 
 export default Login;
+
+
