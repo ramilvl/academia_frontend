@@ -45,19 +45,21 @@ function ForgotPassword() {
 
         setLoading(true);
         try {
-            const response = await fetch('http://localhost:8080/api/auth/reset-password', {
-                method: 'POST',
+            const response = await fetch('http://localhost:8080/v1/auth/change-password', {
+                method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, newPassword }),
+                body: JSON.stringify({ email, newPassword, confirmPassword }),
             });
 
             if (!response.ok) {
-                setError('Server xətası baş verdi.');
+                const data = await response.json().catch(() => null);
+                const serverMessage = data?.message || 'Server xətası baş verdi.';
+                setError(serverMessage);
                 return;
             }
 
             setSuccess('Şifrəniz uğurla dəyişdirildi!');
-            setTimeout(() => navigate('/login'), 2000);
+            setTimeout(() => navigate('/login'), 1000);
         } catch {
             setError('Şəbəkə xətası baş verdi.');
         } finally {
@@ -93,7 +95,6 @@ function ForgotPassword() {
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     autoComplete="new-password"
                 />
-
 
                 {error && <p style={{ color: 'red' }}>{error}</p>}
                 {success && <p style={{ color: 'green' }}>{success}</p>}
