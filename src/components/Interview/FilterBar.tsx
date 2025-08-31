@@ -1,34 +1,27 @@
 import React from "react";
 
-export type FilterBarProps = {
-  selectedCategory: string;
+interface FilterBarProps {
   selectedDifficulty: string;
-  setCategory: (val: string) => void;
   setDifficulty: (val: string) => void;
-};
+  levels: string[];
+}
 
 const FilterBar: React.FC<FilterBarProps> = ({
-  selectedCategory,
   selectedDifficulty,
-  setCategory,
   setDifficulty,
+  levels,
 }) => {
   return (
     <div className="filter-bar">
-      <select value={selectedCategory} onChange={(e) => setCategory(e.target.value)}>
-        <option value="">All Categories</option>
-        <option value="JavaScript">JavaScript</option>
-        <option value="React">React</option>
-        {/* Add more options as needed */}
-      </select>
-
+      {/* Çətinlik seçimi */}
       <select value={selectedDifficulty} onChange={(e) => setDifficulty(e.target.value)}>
-        <option value="">All Difficulties</option>
-        <option value="easy">Easy</option>
-        <option value="medium">Medium</option>
-        <option value="hard">Hard</option>
+        <option value="">Bütün səviyyələr</option>
+        {levels.map((level) => (
+          <option key={level} value={level.toLowerCase()}>
+            {level.charAt(0).toUpperCase() + level.slice(1)}
+          </option>
+        ))}
       </select>
-
     </div>
   );
 };
