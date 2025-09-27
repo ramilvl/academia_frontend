@@ -88,7 +88,7 @@ function Login({ setToken }: LoginProps) {
             </div>
 
             <div className="login_right_panel">
-                <span>Welcome</span>
+                <span>Xoş Gəlmişsiniz!</span>
                 <form onSubmit={handleLogin} className="auth-form">
                 <div className="input-wrapper">
                         <label>Email</label>
