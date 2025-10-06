@@ -15,6 +15,7 @@ import MaterialQuiz from './pages/MaterialQuiz';
 import InterviewQuestionsPage from './pages/InterviewQuestionsPage';
 
 import Navbar from './components/Navbar';
+import Career from './pages/Career';
 
 function App() {
     const location = useLocation();
@@ -58,6 +59,7 @@ function App() {
                 <Route path="/course/:courseId/material/:materialId/quiz" element={<MaterialQuiz />} />
                 <Route path="/recording" element={<About />} />
                 <Route path="/interview" element={<InterviewQuestionsPage />} />
+                <Route path="/career" element={<Career />}/>
 
                 <Route path="*" element={<Navigate to="/login" replace />} />
             </Routes>

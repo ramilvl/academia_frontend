@@ -50,6 +50,7 @@ const Navbar = () => {
           <Link to="/recording">Recordings</Link>
           <Link to="/courses">Kurslarım</Link>
           <Link to="/interview">"Interview" Sualları</Link>
+          <Link to="/career">Karyera</Link>
         </div>
 
         <div className="navbar-user">
