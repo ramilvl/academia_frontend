@@ -1,91 +1,142 @@
+import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { courses } from "../../data/courses";
+import axios from "axios";
 
-const MaterialDetail = () => {
-  const { courseId, materialId } = useParams();
+interface Question {
+  question: string;
+  options: string[];
+  answer: string;
+}
 
-  const course = courses.find(c => c.id === courseId);
-  if (!course) return <p>Course not found.</p>;
+interface Material {
+  id: number;
+  title: string;
+  description: string;
+  content: string;
+  question: Question[];
+  recordUrl: string;
+}
 
-  const material = course.materials.find(m => m.id === materialId);
-  if (!material) return <p>Material not found.</p>;
+interface Topic {
+  id: number;
+  title: string;
+  description: string;
+  materials: Material[];
+}
 
-  const containerStyle: React.CSSProperties = {
-    maxWidth: "700px",
-    margin: "2rem auto",
-    padding: "1rem",
-    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-    lineHeight: 1.6,
-    backgroundColor: "#f9f9f9",
-    borderRadius: "8px",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-  };
+interface Course {
+  id: number;
+  title: string;
+  description: string;
+  topics: Topic[];
+}
 
-  const titleStyle: React.CSSProperties = {
-    borderBottom: "2px solid #007acc",
-    paddingBottom: "0.3rem",
-    marginBottom: "1rem",
-    color: "#007acc",
-  };
+const MaterialDetail: React.FC = () => {
+  const { courseId, materialId } = useParams<{ courseId: string; materialId: string }>();
+  const [course, setCourse] = useState<Course | null>(null);
+  const [material, setMaterial] = useState<Material | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const contentStyle: React.CSSProperties = {
-    whiteSpace: "pre-wrap",
-    marginBottom: "2rem",
-    fontSize: "1.1rem",
-    color: "#333",
-  };
+  useEffect(() => {
+    const fetchMaterial = async () => {
+      try {
+        const res = await axios.get("http://localhost:8080/v1/course");
+        const allCourses: Course[] = res.data.data.content;
+        const foundCourse = allCourses.find((c) => c.id === Number(courseId));
+        if (!foundCourse) return setError("Kurs tapılmadı.");
 
-  const quizTitleStyle: React.CSSProperties = {
-    color: "#444",
-    marginBottom: "1rem",
-  };
+        setCourse(foundCourse);
 
-  const questionStyle: React.CSSProperties = {
-    marginBottom: "1rem",
-    backgroundColor: "#fff",
-    padding: "1rem",
-    borderRadius: "6px",
-    boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
-  };
+        // materialı tapırıq (topic → materials içərisindən)
+        let foundMaterial: Material | undefined;
+        for (const topic of foundCourse.topics) {
+          const mat = topic.materials.find((m) => m.id === Number(materialId));
+          if (mat) {
+            foundMaterial = mat;
+            break;
+          }
+        }
 
-  const questionTextStyle: React.CSSProperties = {
-    fontWeight: "600",
-    marginBottom: "0.5rem",
-  };
+        if (!foundMaterial) return setError("Material tapılmadı.");
+        setMaterial(foundMaterial);
+      } catch (err) {
+        console.error(err);
+        setError("Material yüklənə bilmədi.");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const optionListStyle: React.CSSProperties = {
-    listStyleType: "disc",
-    paddingLeft: "1.5rem",
-    color: "#555",
-  };
+    fetchMaterial();
+  }, [courseId, materialId]);
 
-  const backLinkStyle: React.CSSProperties = {
-    display: "inline-block",
-    marginTop: "2rem",
-    textDecoration: "none",
-    color: "#007acc",
-    fontWeight: "600",
-  };
+  if (loading) return <p>Yüklənir...</p>;
+  if (error) return <p>{error}</p>;
+  if (!course || !material) return <p>Material tapılmadı.</p>;
+
+  const styles = {
+    container: {
+      maxWidth: "700px",
+      margin: "2rem auto",
+      padding: "1rem",
+      fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+      lineHeight: 1.6,
+      backgroundColor: "#f9f9f9",
+      borderRadius: "8px",
+      boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+    },
+    title: {
+      borderBottom: "2px solid #007acc",
+      paddingBottom: "0.3rem",
+      marginBottom: "1rem",
+      color: "#007acc",
+    },
+    content: {
+      whiteSpace: "pre-wrap",
+      marginBottom: "2rem",
+      fontSize: "1.1rem",
+      color: "#333",
+    },
+    quizTitle: {
+      color: "#444",
+      marginBottom: "1rem",
+    },
+    question: {
+      marginBottom: "1rem",
+      backgroundColor: "#fff",
+      padding: "1rem",
+      borderRadius: "6px",
+      boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
+    },
+    backLink: {
+      display: "inline-block",
+      marginTop: "2rem",
+      textDecoration: "none",
+      color: "#007acc",
+      fontWeight: "600",
+    },
+  } as const;
 
   return (
-    <div style={containerStyle}>
-      <h2 style={titleStyle}>{material.title}</h2>
-      <p style={contentStyle}>{material.content}</p>
+    <div style={styles.container}>
+      <h2 style={styles.title}>{material.title}</h2>
+      <p style={styles.content}>{material.content}</p>
 
-      <h3 style={quizTitleStyle}>Quiz</h3>
-      {material.questions.map(q => (
-        <div key={q.id} style={questionStyle}>
-          <p style={questionTextStyle}>{q.question}</p>
-          <ul style={optionListStyle}>
-            {q.options.map(option => (
-              <li key={option}>{option}</li>
+      <h3 style={styles.quizTitle}>📝 Quiz</h3>
+      {material.question.map((q, index) => (
+        <div key={index} style={styles.question}>
+          <p><strong>{q.question}</strong></p>
+          <ul>
+            {q.options.map((option, idx) => (
+              <li key={idx}>{option}</li>
             ))}
           </ul>
         </div>
       ))}
 
-      <Link to={`/courses/${courseId}`} style={backLinkStyle}>
-        &larr; Back to {course.title}
+      <Link to={`/course/${courseId}`} style={styles.backLink}>
+        ← Geri {course.title} səhifəsinə
       </Link>
     </div>
   );

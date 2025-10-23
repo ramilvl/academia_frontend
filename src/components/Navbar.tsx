@@ -47,7 +47,6 @@ const Navbar = () => {
 
         <div className="navbar-links">
           <Link to="/home">Əsas Səhifə</Link>
-          <Link to="/recording">Recordings</Link>
           <Link to="/courses">Kurslarım</Link>
           <Link to="/interview">"Interview" Sualları</Link>
           <Link to="/career">Karyera</Link>

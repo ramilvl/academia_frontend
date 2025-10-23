@@ -1,59 +1,230 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import { courses } from '../data/courses';
-import '../styles/courseDetail.scss';
+import React, { useState, useEffect } from "react";
+import {
+  Link,
+  useNavigate,
+  useParams,
+  NavLink,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import axios from "axios";
+import "../styles/courseDetail.scss";
+import GradebookSection from "./GradebookSection";
 
 interface Question {
-  id: string;
   question: string;
   options: string[];
-  correctAnswer: string;
+  answer: string;
 }
 
 interface Material {
-  id: string;
+  id: number;
   title: string;
+  description: string;
   content: string;
-  questions: Question[];
+  question: Question[];
+  recordUrl: string;
 }
+
+interface Topic {
+  id: number;
+  title: string;
+  description: string;
+  materials: Material[];
+}
+
+interface Course {
+  id: number;
+  title: string;
+  description: string;
+  topics: Topic[];
+}
+
+const ContentTab: React.FC<{
+  course: Course;
+  doneMaterials: string[];
+  handleMarkDone: (id: number) => void;
+  handleSelectMaterial: (m: Material) => void;
+}> = ({ course, doneMaterials, handleMarkDone, handleSelectMaterial }) => {
+  const [selectedTopicId, setSelectedTopicId] = useState<number | null>(null);
+
+  const toggleTopic = (id: number) => {
+    setSelectedTopicId((prev) => (prev === id ? null : id));
+  };
+
+  if (course.topics.length === 0) {
+    return <p>Bu kurs üçün mövzu əlavə edilməyib.</p>;
+  }
+
+  return (
+    <div className="topics-wrapper">
+      {course.topics.map((topic) => (
+        <div key={topic.id} className="topic-section">
+          <div
+            className="topic-header"
+            onClick={() => toggleTopic(topic.id)}
+            style={{
+              cursor: "pointer",
+              backgroundColor: "#f4f4f4",
+              padding: "10px",
+              borderRadius: "8px",
+              marginBottom: "8px",
+            }}
+          >
+            <strong>{topic.title}</strong>
+            <p style={{ margin: 0, color: "#666" }}>{topic.description}</p>
+          </div>
+
+          {selectedTopicId === topic.id && (
+            <ul className="material-list" style={{ marginLeft: "1rem" }}>
+              {topic.materials.map((material) => (
+                <li
+                  key={material.id}
+                  className="material-item"
+                  onClick={() => handleSelectMaterial(material)}
+                  style={{
+                    listStyle: "none",
+                    border: "1px solid #ddd",
+                    borderRadius: "6px",
+                    padding: "8px",
+                    marginBottom: "6px",
+                    cursor: "pointer",
+                    backgroundColor: "#fff",
+                  }}
+                >
+                  <div className="material-header-desc">
+                    <span style={{ fontWeight: "500" }}>{material.title}</span>
+                    <p style={{ color: "#777", fontSize: "0.9rem" }}>
+                      {material.description}
+                    </p>
+                  </div>
+                </li>
+              ))}
+              {topic.materials.length === 0 && (
+                <p style={{ marginLeft: "1rem", color: "#999" }}>
+                  Material əlavə edilməyib.
+                </p>
+              )}
+            </ul>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+};
+
+const RecordingsTab: React.FC<{ course: Course }> = ({ course }) => (
+  <div>
+    {course.topics.map((topic) => (
+      <div key={topic.id}>
+        <h3>🎥 {topic.title} Recordings</h3>
+        {topic.materials.map((m) =>
+          m.recordUrl ? (
+            <video
+              key={m.id}
+              controls
+              width={400}
+              style={{ marginBottom: "1rem" }}
+            >
+              <source src={m.recordUrl} type="video/mp4" />
+              Sizin brauzer video dəstəkləmir.
+            </video>
+          ) : null
+        )}
+      </div>
+    ))}
+  </div>
+);
+
+const DiscussionsTab: React.FC = () => <div>💬 Discussions will appear here.</div>;
+
+// ✅ Navbar component
+const CourseNavbar: React.FC = () => {
+  const { courseId } = useParams<{ courseId: string }>();
+  const tabs = [
+    { name: "Content", path: "content" },
+    { name: "Recordings", path: "recordings" },
+    { name: "Gradebook", path: "gradebook" },
+    { name: "Discussions", path: "discussions" },
+  ];
+
+  return (
+    <nav className="course-navbar">
+      {tabs.map((tab) => (
+        <NavLink
+          key={tab.path}
+          to={`/courses/${courseId}/${tab.path}`}
+          className={({ isActive }) =>
+            isActive ? "nav-item active" : "nav-item"
+          }
+        >
+          {tab.name}
+        </NavLink>
+      ))}
+    </nav>
+  );
+};
 
 const CourseDetail: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
-  const course = courses.find((c) => c.id === courseId);
 
-  const [selectedMaterial] = useState<Material | null>(null);
-  const [viewType, setViewType] = useState<'read' | 'quiz' | null>(null);
+  const [course, setCourse] = useState<Course | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   const [doneMaterials, setDoneMaterials] = useState<string[]>([]);
-
   const STORAGE_KEY = `doneMaterials-${courseId}`;
 
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      setDoneMaterials(JSON.parse(saved));
-    }
+    if (saved) setDoneMaterials(JSON.parse(saved));
   }, [courseId]);
 
   useEffect(() => {
-    if (courseId) {
+    if (courseId)
       localStorage.setItem(STORAGE_KEY, JSON.stringify(doneMaterials));
-    }
   }, [doneMaterials, courseId]);
 
-  if (!course) {
-    return <div className="course-detail">Course not found.</div>;
-  }
+  useEffect(() => {
+    const fetchCourse = async () => {
+      try {
+        const response = await axios.get("http://localhost:8080/v1/course");
+        const allCourses = response.data.data.content;
+        const foundCourse = allCourses.find(
+          (c: any) => c.id === Number(courseId)
+        );
+        if (!foundCourse) {
+          setError("Kurs tapılmadı.");
+        } else {
+          setCourse(foundCourse);
+        }
+      } catch (err) {
+        console.error(err);
+        setError("Kurs məlumatı yüklənə bilmədi.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCourse();
+  }, [courseId]);
 
   const handleSelectMaterial = (material: Material) => {
     navigate(`/course/${courseId}/material/${material.id}`);
   };
 
-  const handleMarkDone = (id: string) => {
+  const handleMarkDone = (id: number) => {
     setDoneMaterials((prev) =>
-      prev.includes(id) ? prev.filter((mid) => mid !== id) : [...prev, id]
+      prev.includes(id.toString())
+        ? prev.filter((mid) => mid !== id.toString())
+        : [...prev, id.toString()]
     );
   };
+
+  if (loading) return <p>Yüklənir...</p>;
+  if (error) return <p>{error}</p>;
+  if (!course) return <p>Kurs tapılmadı.</p>;
 
   return (
     <div className="course-detail">
@@ -61,72 +232,27 @@ const CourseDetail: React.FC = () => {
         ← Geri
       </Link>
 
-      <h2 className="course-title">{course.title} üçün materiallar</h2>
+      <h2 className="course-title">{course.title}</h2>
 
-      <ul className="material-list">
-        {course.materials.map((material) => (
-          <li
-            key={material.id}
-            className="material-item"
-            onClick={() => handleSelectMaterial(material)}
-          >
-            <div className="material-header">
-              <div className="material-header-desc">
-                <span>{material.title}</span>
-                <span>{material.description}</span>
-              </div>
-              <input
-                type="checkbox"
-                checked={doneMaterials.includes(material.id)}
-                onClick={(e) => e.stopPropagation()}
-                onChange={() => handleMarkDone(material.id)}
-              />
-            </div>
-            {doneMaterials.includes(material.id) && (
-              <div className="done-status">🎉 Completed</div>
-            )}
-          </li>
-        ))}
-      </ul>
+      <CourseNavbar />
 
-      {selectedMaterial && !viewType && (
-        <div className="material-options">
-          <p>
-            What do you want to do with <strong>{selectedMaterial.title}</strong>?
-          </p>
-          <button onClick={() => setViewType('read')} className="btn btn-read">
-            📘 Read Material
-          </button>
-          <button onClick={() => setViewType('quiz')} className="btn btn-quiz">
-            📝 Take Quiz
-          </button>
-        </div>
-      )}
-
-      {selectedMaterial && viewType === 'read' && (
-        <div className="material-content">
-          <h3>{selectedMaterial.title}</h3>
-          <p>{selectedMaterial.content}</p>
-        </div>
-      )}
-
-      {selectedMaterial && viewType === 'quiz' && (
-        <div className="material-quiz">
-          <h3>Quiz: {selectedMaterial.title}</h3>
-          <ul>
-            {selectedMaterial.questions.map((q) => (
-              <li key={q.id}>
-                <strong>{q.question}</strong>
-                <ul>
-                  {q.options.map((opt, idx) => (
-                    <li key={idx}>{opt}</li>
-                  ))}
-                </ul>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+      <Routes>
+        <Route index element={<Navigate to="content" replace />} />
+        <Route
+          path="content"
+          element={
+            <ContentTab
+              course={course}
+              doneMaterials={doneMaterials}
+              handleMarkDone={handleMarkDone}
+              handleSelectMaterial={handleSelectMaterial}
+            />
+          }
+        />
+        <Route path="recordings" element={<RecordingsTab course={course} />} />
+        <Route path="gradebook" element={<GradebookSection />} />
+        <Route path="discussions" element={<DiscussionsTab />} />
+      </Routes>
     </div>
   );
 };

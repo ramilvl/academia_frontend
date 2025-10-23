@@ -4,16 +4,13 @@ import { courses } from "../data/courses";
 import type { Question } from "../data/types";
 import "../styles/quiz.scss";
 
-type ExplanationResponse = {
-  [questionId: string]: string;
-};
+type ExplanationResponse = Record<string, string>;
 
 const MaterialQuiz: React.FC = () => {
   const { courseId, materialId } = useParams<{ courseId: string; materialId: string }>();
 
-  if (!courseId || !materialId) {
+  if (!courseId || !materialId)
     return <div className="quiz-error">Error: Missing course or material ID in URL.</div>;
-  }
 
   const course = courses.find((c) => c.id === courseId);
   if (!course) return <div className="quiz-error">Course not found</div>;
@@ -21,7 +18,7 @@ const MaterialQuiz: React.FC = () => {
   const material = course.materials.find((m) => m.id === materialId);
   if (!material) return <div className="quiz-error">Material not found</div>;
 
-  const questions: Question[] = material.questions || [];
+  const questions = material.questions || [];
 
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
@@ -35,16 +32,23 @@ const MaterialQuiz: React.FC = () => {
   };
 
   const fetchExplanations = async (wrongQuestions: Question[]) => {
+    const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
+
+    if (!apiKey) {
+      setError("OpenAI API key is missing. Please add it to your .env file.");
+      return;
+    }
+
     try {
       setLoading(true);
       setError(null);
 
       const prompt = wrongQuestions
         .map(
-          (q) =>
-            `Question: ${q.question}\nOptions: ${q.options.join(
-              ", "
-            )}\nCorrect Answer: ${q.correctAnswer}\nExplain why the correct answer is correct and why other options are wrong.\n`
+          (q, index) =>
+            `Question ${index + 1}: ${q.question}\nOptions: ${q.options.join(", ")}\nCorrect Answer: ${
+              q.correctAnswer
+            }\nExplain why this is correct and others are not.\n`
         )
         .join("\n---\n");
 
@@ -52,36 +56,28 @@ const MaterialQuiz: React.FC = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
+          Authorization: `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
           model: "gpt-4o-mini",
           messages: [
-            {
-              role: "system",
-              content: "You are an expert teacher providing detailed explanations.",
-            },
-            {
-              role: "user",
-              content: prompt,
-            },
+            { role: "system", content: "You are a helpful and expert teacher." },
+            { role: "user", content: prompt },
           ],
-          max_tokens: 600,
           temperature: 0.7,
+          max_tokens: 800,
         }),
       });
 
       const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.error?.message || "OpenAI API error");
-      }
+      if (!response.ok) throw new Error(data.error?.message || "OpenAI API error");
 
-      const explanationText = data.choices[0].message.content;
-      const explanationParts = explanationText.split("\n---\n");
+      const explanationText: string = data.choices?.[0]?.message?.content || "";
+      const parts = explanationText.split(/\n-{3,}\n/);
 
       const newExplanations: ExplanationResponse = {};
-      wrongQuestions.forEach((q, idx) => {
-        newExplanations[q.id] = explanationParts[idx] || "No explanation available.";
+      wrongQuestions.forEach((q, i) => {
+        newExplanations[q.id] = parts[i]?.trim() || "No explanation available.";
       });
 
       setExplanations(newExplanations);
@@ -98,13 +94,10 @@ const MaterialQuiz: React.FC = () => {
     let correctCount = 0;
     const wrongQuestions: Question[] = [];
 
-    questions.forEach((q) => {
-      if (answers[q.id] === q.correctAnswer) {
-        correctCount++;
-      } else {
-        wrongQuestions.push(q);
-      }
-    });
+    for (const q of questions) {
+      if (answers[q.id] === q.correctAnswer) correctCount++;
+      else wrongQuestions.push(q);
+    }
 
     setScore(correctCount);
     setSubmitted(true);
@@ -116,40 +109,39 @@ const MaterialQuiz: React.FC = () => {
 
   return (
     <div className="material-quiz-container">
-      <h2 className="material-quiz-title">{material.title} Quizi</h2>
+      <h2 className="material-quiz-title">{material.title} — Quiz</h2>
 
-      {questions.length === 0 && <p className="quiz-empty">No questions available.</p>}
+      {questions.length === 0 ? (
+        <p className="quiz-empty">No questions available.</p>
+      ) : !submitted ? (
+        <>
+          {questions.map((q) => (
+            <div key={q.id} className="quiz-question">
+              <p className="quiz-question-text">{q.question}</p>
+              {q.options.map((option) => (
+                <label key={option} className="quiz-option">
+                  <input
+                    type="radio"
+                    name={q.id}
+                    value={option}
+                    checked={answers[q.id] === option}
+                    onChange={() => handleAnswerChange(q.id, option)}
+                  />
+                  {option}
+                </label>
+              ))}
+            </div>
+          ))}
 
-      {!submitted &&
-        questions.map((q) => (
-          <div key={q.id} className="quiz-question">
-            <p className="quiz-question-text">{q.question}</p>
-            {q.options.map((option) => (
-              <label key={option} className="quiz-option">
-                <input
-                  type="radio"
-                  name={q.id}
-                  value={option}
-                  checked={answers[q.id] === option}
-                  onChange={() => handleAnswerChange(q.id, option)}
-                />
-                {option}
-              </label>
-            ))}
-          </div>
-        ))}
-
-      {!submitted && (
-        <button
-          className="submit-button"
-          onClick={handleSubmit}
-          disabled={questions.length === 0 || Object.keys(answers).length !== questions.length}
-        >
-          Submit Quiz
-        </button>
-      )}
-
-      {submitted && (
+          <button
+            className="submit-button"
+            onClick={handleSubmit}
+            disabled={Object.keys(answers).length !== questions.length}
+          >
+            Submit Quiz
+          </button>
+        </>
+      ) : (
         <div className="quiz-result">
           <h3>
             Your Score: {score} / {questions.length}

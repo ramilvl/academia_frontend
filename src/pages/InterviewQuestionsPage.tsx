@@ -1,17 +1,19 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import QuestionCard from "../components/Interview/QuestionCard";
 import FilterBar from "../components/Interview/FilterBar";
 import "../styles/InterviewQuestions.scss";
 
+// Sualların tipi
 interface Question {
   id: number;
   question: string;
   answer: string;
   level: string;
+  category?: string;
+  degree?: string;
 }
 
-const InterviewQuestionsPage = () => {
+const InterviewQuestionsPage: React.FC = () => {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [search, setSearch] = useState("");
   const [difficulty, setDifficulty] = useState(""); // seçilmiş difficulty
@@ -24,27 +26,62 @@ const InterviewQuestionsPage = () => {
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        // Backend level parametri tələb edir, filter-də seçilmiş difficulty göndəririk
-        const response = await axios.get("http://localhost:8080/v1/interview", {
-          params: {
-            level: difficulty.toUpperCase() || "EASY", // default EASY
+        setLoading(true);
+
+        // --- Mock backend data ---
+        const mockData: Question[] = [
+          {
+            id: 1,
+            question: "What is React?",
+            answer: "A JS library for building user interfaces",
+            level: "easy",
+            category: "Frontend",
+            degree: "Junior",
           },
-        });
+          {
+            id: 2,
+            question: "Explain closures in JavaScript",
+            answer:
+              "A function having access to outer scope even after outer function has returned",
+            level: "medium",
+            category: "JavaScript",
+            degree: "Mid",
+          },
+          {
+            id: 3,
+            question: "What is a Promise in JS?",
+            answer: "An object representing eventual completion or failure of async operation",
+            level: "easy",
+            category: "JavaScript",
+            degree: "Junior",
+          },
+          {
+            id: 4,
+            question: "What is React Suspense?",
+            answer: "A feature to wait for some code or data before rendering",
+            level: "hard",
+            category: "Frontend",
+            degree: "Senior",
+          },
+          {
+            id: 5,
+            question: "Difference between var, let, and const?",
+            answer: "var is function scoped, let/const are block scoped",
+            level: "easy",
+            category: "JavaScript",
+            degree: "Junior",
+          },
+        ];
 
-        let data = response.data.data || [response.data];
+        // Difficulty filter
+        const filteredByDifficulty =
+          difficulty && difficulty !== ""
+            ? mockData.filter((q) => q.level.toLowerCase() === difficulty.toLowerCase())
+            : mockData;
 
-        if (!Array.isArray(data)) data = [data];
-
-        const formatted = data.map((q: any, index: number) => ({
-          id: index + 1,
-          question: q.question,
-          answer: q.answer,
-          level: q.level?.toLowerCase() || "easy",
-        }));
-
-        setQuestions(formatted);
+        setQuestions(filteredByDifficulty);
       } catch (err) {
-        console.error("API error:", err);
+        console.error("Error fetching questions:", err);
         setError("Suallar yüklənə bilmədi");
       } finally {
         setLoading(false);
@@ -52,15 +89,15 @@ const InterviewQuestionsPage = () => {
     };
 
     fetchQuestions();
-  }, [difficulty]); // difficulty dəyişəndə API yenidən çağırılır
+  }, [difficulty]);
 
-  // Filtrləmə search üçün
+  // Search filter
   const filteredQuestions = questions.filter((q) =>
     q.question.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
-    <div className="interview-page">
+    <div className="interview-page" style={{ padding: "2rem" }}>
       <h2>Interview Flashcards</h2>
 
       {loading && <p>Yüklənir...</p>}
@@ -71,16 +108,21 @@ const InterviewQuestionsPage = () => {
         placeholder="Search questions..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="search-input"
+        style={{
+          padding: "0.5rem",
+          margin: "1rem 0",
+          width: "100%",
+          maxWidth: "400px",
+          borderRadius: "5px",
+          border: "1px solid #ccc",
+        }}
       />
 
-      <FilterBar
-        selectedDifficulty={difficulty}
-        setDifficulty={setDifficulty}
-        levels={levels}
-      />
+      <FilterBar selectedDifficulty={difficulty} setDifficulty={setDifficulty} levels={levels} />
 
-      <div className="flashcard-grid">
+      <div className="flashcard-grid" style={{ marginTop: "2rem" }}>
+        {filteredQuestions.length === 0 && !loading && <p>Suallar tapılmadı</p>}
+
         {filteredQuestions.map((q) => (
           <QuestionCard key={q.id} question={q.question} answer={q.answer} />
         ))}

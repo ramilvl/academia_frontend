@@ -12,29 +12,20 @@ interface Course {
 
 const Courses: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchCourses = async () => {
-      try {
         const response = await axios.get('http://localhost:8080/v1/course'); 
-        const courseData = response.data.data.content; // burada content-i götürürük
+        const courseData = response.data.data.content;
 
         const formattedCourses = courseData.map((course: any, index: number) => ({
-          id: index + 1, // backend id qaytarmır, index istifadə edirik
+          id: index + 1,
           title: course.title,
           description: course.description,
           imageUrl: '/default-image.jpg'
         }));
 
         setCourses(formattedCourses);
-      } catch (err) {
-        console.error(err);
-        setError('Kurslar yüklənə bilmədi.');
-      } finally {
-        setLoading(false);
-      }
     };
 
     fetchCourses();
@@ -43,9 +34,6 @@ const Courses: React.FC = () => {
   return (
     <section className="courses-section">
       <span className="courses-title">Kurslarım</span>
-
-      {loading && <p>Yüklənir...</p>}
-      {error && <p>{error}</p>}
 
       <div className="courses-container">
         {courses.map((course) => (
